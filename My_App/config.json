@@ -1,0 +1,14 @@
+{
+    "params":{
+
+        "PASSWORD":"Addy_task1",
+        "PUBLIC_IP_ADDRESS":"35.226.209.40:3306",
+        "DBNAME":"addy",
+        "PROJECT_ID": "astute-ace-291712",
+        "INSTANCE_NAME":"addy",
+        "local_server":"True",
+        "dev_uri":"mysql://root:@localhost/addy",
+        "prod_uri":"mysql://root:@localhost/addy"
+
+    }
+}
