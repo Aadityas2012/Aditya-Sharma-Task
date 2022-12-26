@@ -1,0 +1,52 @@
+- In Challenge 1 we set up environment.
+- Now in Challenge 2 we extract the meta data in json format.
+
+
+Prerequisites: In order to access VM metadata, following permissions are required.
+a) compute.projects.get
+b) comoute.instances.get
+
+
+Step 1: In the Google Cloud console, activate Cloud Shell by clicking on ">_" sign on the top right side of console.
+
+
+Step 2: Connect to your Windows Virtual Machine - Replace VM_NAME with the name of the VM you want to find metadata for.
+gcloud compute ssh --project=PROJECT_ID --zone=ZONE VM_NAME
+
+
+Step 3: Describe the instance to get the Public hostname
+gcloud compute instances describe VM_NAME
+
+
+Step 4: Use the Invoke-RestMethod to run query
+
+$value = (Invoke-RestMethod `
+        -Headers @{'Metadata-Flavor' = 'Google'} `
+        -Uri "http://metadata.google.internal/computeMetadata/v1/instance/image")
+$value
+
+Note: 1. 	Single metadata entry - 	/computeMetadata/v1/instance/image
+	Metadata directory listings - 	/computeMetadata/v1/instance/disks/
+	Recursively directory listings-	/computeMetadata/v1/instance/disks/?recursive=true
+
+2. Recursive contents are returned in JSON format. 
+
+
+Step 5: Format query output : Each endpoint has a predefined format for the response. Some endpoints might return data in JSON format by default, 
+			while other endpoints might return data as a string. Override; /?recursive=true&alt=text or alt=json
+
+
+$value = (Invoke-RestMethod `
+          -Headers @{'Metadata-Flavor' = 'Google'} `
+          -Uri "http://metadata.google.internal/computeMetadata/v1/instance/tags?alt=json")
+$value
+
+
+Step 6: wait-for-change feature: If metadata values changes while VM is running. Server can be notified of metadata changes by using the wait-for-change 
+			   feature. With this option, the request only returns an output when your specified metadata has changed.
+
+
+$value = (Invoke-RestMethod `
+          -Headers @{'Metadata-Flavor' = 'Google'} `
+          -Uri "http://metadata.google.internal/computeMetadata/v1/instance/tags?wait_for_change=true")
+$value
